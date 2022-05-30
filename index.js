@@ -16,46 +16,40 @@ mongoose.connect('mongodb://localhost:27017/ApiFlix', { useNewUrlParser: true, u
 
 const app = express();
 
-app.use(morgan('common'));
 app.use(bodyParser.json());
-
 
 app.use(bodyParser.urlencoded({
     extended: true
   }));
 
-let auth = require('./auth')(app);
+let auth = require('./auth.js')(app);
 
 const passport = require('passport');
-require('./passport');
+require('./passport.js');
+
+app.use(morgan('common'));
 
 
 // New 2.8
 //Create New User
 app.post('/users', (req, res) => {
-    Users.findOne({ Username: req.body.Username })
-      .then((user) => {
+    Users.findOne({ Username: req.body.Username }).then((user) => {
         if (user) {
           return res.status(400).send(req.body.Username + 'already exists');
         } else {
-          Users
-            .create({
+          Users.create({
               Username: req.body.Username,
               Password: req.body.Password,
               Email: req.body.Email,
               Birthday: req.body.Birthday
             })
             .then((user) =>{res.status(201).json(user) })
-          .catch((error) => {
-            console.error(error);
-            res.status(500).send('Error: ' + error);
-          })
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        res.status(500).send('Error: ' + error);
-      });
+            .catch((error) => {
+              console.error(error);
+              res.status(500).send('Error: ' + error);
+            });
+          }
+        });
 });
 
 // Get All Movies
