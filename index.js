@@ -36,6 +36,9 @@ const { check, validationResult } = require('express-validator');
 
 app.use(morgan('common'));
 
+app.get('/', (req, res) => {
+  res.send('Welcome to ApiFlix!');
+});
 
 // New 2.8
 //Create New User
